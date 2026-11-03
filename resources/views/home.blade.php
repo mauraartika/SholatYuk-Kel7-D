@@ -961,14 +961,16 @@
                         </p>
                     </article>
 
-                    <article class="feature">
-                        <div class="feature-icon">♫</div>
-                        <h3>Adzan & pengingat</h3>
-                        <p>
-                            Atur pengingat dan pilihan audio adzan
-                            untuk menemani waktu-waktu sholat.
-                        </p>
-                    </article>
+                    <a href="/pengaturan-notifikasi" class="feature-link">
+                        <article class="feature">
+                            <div class="feature-icon">♫</div>
+                            <h3>Adzan & pengingat</h3>
+                            <p>
+                                Atur pengingat dan pilihan audio adzan
+                                untuk menemani waktu-waktu sholat.
+                            </p>
+                        </article>
+                    </a>
 
                     <article class="feature">
                         <div class="feature-icon">☾</div>
