@@ -17,9 +17,20 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('gender', ['L', 'P']);
+            $table->date('tanggal_lahir')->nullable();
+            $table->string('lokasi')->nullable();
+            $table->double('latitude')->nullable();
+            $table->double('longitude')->nullable();
+            $table->boolean('mode_libur')->default(false);
+            $table->date('tgl_mulai_libur')->nullable();
+            $table->boolean('dnd')->default(false);
+            $table->boolean('notif_adzan_aktif')->default(true);
+            $table->boolean('notif_dalil_aktif')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
