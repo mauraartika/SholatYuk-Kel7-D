@@ -717,6 +717,17 @@
                 align-items: flex-start;
             }
         }
+
+        .feature-link {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .feature-link .feature {
+            height: 100%;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -940,14 +951,27 @@
                         </article>
                     </a>
 
-                    <article class="feature">
-                        <div class="feature-icon">✓</div>
-                        <h3>Catatan ibadah</h3>
-                        <p>
-                            Tandai sholat wajib maupun sunnah dan
-                            bangun kebiasaan ibadah yang konsisten.
-                        </p>
-                    </article>
+                    <a href="{{ url('/pelacakan-ibadah') }}" class="feature-link">
+                        <article class="feature">
+                            <div class="feature-icon">✓</div>
+                            <h3>Catatan ibadah</h3>
+                            <p>
+                                Pantau progres sholat wajib dan sunnah
+                                serta catat ibadah harianmu.
+                            </p>
+                        </article>
+                    </a>
+
+                    <a href="{{ url('/sholat-sunnah') }}" class="feature-link">
+                        <article class="feature">
+                            <div class="feature-icon">☾</div>
+                            <h3>Sholat Sunnah</h3>
+                            <p>
+                                Catat sholat sunnah yang telah dikerjakan
+                                dan pantau konsistensi ibadah harianmu.
+                            </p>
+                        </article>
+                    </a>
 
                     <article class="feature">
                         <div class="feature-icon">▥</div>
