@@ -969,16 +969,6 @@
                                 Atur pengingat dan pilihan audio adzan
                                 untuk menemani waktu-waktu sholat.
                             </p>
-
-                            <div class="feature-actions">
-                                <button class="feature-btn primary" type="button" id="btnEnableNotif">
-                                    Aktifkan notifikasi
-                                </button>
-                                <button class="feature-btn" type="button" id="btnTestNotif">
-                                    Coba suara
-                                </button>
-                            </div>
-                            <small class="feature-status" id="notifStatus"></small>
                         </article>
                     </a>
 
