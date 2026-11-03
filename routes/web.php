@@ -11,3 +11,10 @@ Route::get('/masjid-terdekat', function () {
 Route::get('/arah-kiblat', function () {
     return view('arahkiblat');
 });
+Route::get('/pelacakan-ibadah', function () {
+    return view('pelacakanibadah');
+});
+Route::get('/sholat-sunnah', function () {
+    return view('sholatsunnah');
+});
+

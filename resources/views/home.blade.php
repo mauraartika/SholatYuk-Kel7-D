@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -57,7 +60,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid rgba(24,37,30,.08);
+            border-bottom: 1px solid rgba(24, 37, 30, .08);
         }
 
         .brand {
@@ -141,7 +144,10 @@
             background: #78917e;
         }
 
-        h1, h2, h3, p {
+        h1,
+        h2,
+        h3,
+        p {
             margin-top: 0;
         }
 
@@ -222,7 +228,7 @@
             border: 8px solid #202a23;
             border-radius: 39px;
             background: #fbfcf8;
-            box-shadow: 0 30px 70px rgba(29,47,35,.18);
+            box-shadow: 0 30px 70px rgba(29, 47, 35, .18);
             padding: 18px 15px 16px;
             transform: rotate(3deg);
         }
@@ -285,7 +291,7 @@
             position: absolute;
             right: 14px;
             top: 5px;
-            color: rgba(255,255,255,.13);
+            color: rgba(255, 255, 255, .13);
             font-size: 75px;
         }
 
@@ -349,7 +355,7 @@
             background: white;
             border: 1px solid #edf0e9;
             border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(30,48,36,.09);
+            box-shadow: 0 15px 35px rgba(30, 48, 36, .09);
             padding: 13px 16px;
         }
 
@@ -429,7 +435,7 @@
 
         .feature {
             min-height: 220px;
-            background: rgba(255,255,255,.72);
+            background: rgba(255, 255, 255, .72);
             border: 1px solid var(--line);
             border-radius: 18px;
             padding: 27px;
@@ -438,7 +444,7 @@
 
         .feature:hover {
             transform: translateY(-4px);
-            box-shadow: 0 16px 35px rgba(27,47,34,.06);
+            box-shadow: 0 16px 35px rgba(27, 47, 34, .06);
         }
 
         .feature-icon {
@@ -535,7 +541,7 @@
         .cta-panel:after {
             content: "✳";
             position: absolute;
-            color: rgba(255,255,255,.08);
+            color: rgba(255, 255, 255, .08);
             font-size: 160px;
         }
 
@@ -559,7 +565,7 @@
         .cta-panel p {
             position: relative;
             z-index: 1;
-            color: rgba(255,255,255,.75);
+            color: rgba(255, 255, 255, .75);
             font-size: 13px;
             line-height: 1.8;
             margin-bottom: 25px;
@@ -710,6 +716,17 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+        }
+
+        .feature-link {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .feature-link .feature {
+            height: 100%;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -934,14 +951,27 @@
                         </article>
                     </a>
 
-                    <article class="feature">
-                        <div class="feature-icon">✓</div>
-                        <h3>Catatan ibadah</h3>
-                        <p>
-                            Tandai sholat wajib maupun sunnah dan
-                            bangun kebiasaan ibadah yang konsisten.
-                        </p>
-                    </article>
+                    <a href="{{ url('/pelacakan-ibadah') }}" class="feature-link">
+                        <article class="feature">
+                            <div class="feature-icon">✓</div>
+                            <h3>Catatan ibadah</h3>
+                            <p>
+                                Pantau progres sholat wajib dan sunnah
+                                serta catat ibadah harianmu.
+                            </p>
+                        </article>
+                    </a>
+
+                    <a href="{{ url('/sholat-sunnah') }}" class="feature-link">
+                        <article class="feature">
+                            <div class="feature-icon">☾</div>
+                            <h3>Sholat Sunnah</h3>
+                            <p>
+                                Catat sholat sunnah yang telah dikerjakan
+                                dan pantau konsistensi ibadah harianmu.
+                            </p>
+                        </article>
+                    </a>
 
                     <article class="feature">
                         <div class="feature-icon">▥</div>
@@ -1076,8 +1106,7 @@
 
             <div class="cta-panel">
 
-                <div class="eyebrow"
-                     style="color:#dce8dc;justify-content:center">
+                <div class="eyebrow" style="color:#dce8dc;justify-content:center">
                     Mulai dari langkah kecil
                 </div>
 
@@ -1122,4 +1151,5 @@
     </footer>
 
 </body>
+
 </html>
