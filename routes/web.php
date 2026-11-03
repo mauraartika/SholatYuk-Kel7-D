@@ -11,3 +11,6 @@ Route::get('/masjid-terdekat', function () {
 Route::get('/arah-kiblat', function () {
     return view('arahkiblat');
 });
+Route::get('/leaderboard', function () {
+    return view('leaderboard');
+});
