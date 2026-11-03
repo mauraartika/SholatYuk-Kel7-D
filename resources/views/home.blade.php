@@ -982,14 +982,14 @@
                         </p>
                     </article>
 
-                    <article class="feature">
+                    <a href="{{ url('/leaderboard') }}" class="feature">
                         <div class="feature-icon">♧</div>
                         <h3>Komunitas & motivasi</h3>
                         <p>
-                            Bangun semangat melalui streak, pencapaian,
+                            Bangun semangat melalui streak, pencapaian, leaderboard
                             dan fitur sosial bersama teman.
                         </p>
-                    </article>
+                    </a>
 
                     <a href="/pengaturan-notifikasi" class="feature-link">
                         <article class="feature">
