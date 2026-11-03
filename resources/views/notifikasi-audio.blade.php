@@ -308,8 +308,8 @@
 
     <section class="heading">
         <div class="eyebrow">Akun & Pengaturan</div>
-        <h1>Profil kamu.</h1>
-        <p class="subtitle">Atur preferensi ibadah, notifikasi, dan akun SholatYuk dalam satu tempat.</p>
+        <h1>Pengaturan Adzan & Notifikasi.</h1>
+        <p class="subtitle">Atur preferensi ibadah dan notifikasi sholat serta dalil.</p>
     </section>
 
     <!-- FITUR -->
@@ -340,9 +340,6 @@
         </button>
 
     </section>
-
-    <!-- ACCOUNT -->
-    <div class="section-label" style="padding-left:6px">Account</div>
 
 </main>
 
