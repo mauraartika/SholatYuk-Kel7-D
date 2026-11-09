@@ -736,17 +736,37 @@
     <!-- NAVBAR -->
     <header class="wrap topbar">
 
-        <a class="brand" href="{{ url('/') }}">
+        <a class="brand" href="{{ url('/home') }}">
             <span class="brand-mark">☾</span>
             <span>SholatYuk</span>
         </a>
 
         <nav class="nav" aria-label="Navigasi utama">
-            <a href="#fitur">Fitur</a>
-            <a href="#tentang">Tentang</a>
-            <a href="#mulai" class="nav-cta">
-                Mulai Jelajahi ↗
-            </a>
+            @auth
+                <!-- Greeting & Clickable Profile Picture -->
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <span style="font-weight: 600; color: #2a4d38;">
+                        Welcome back, {{ Auth::user()->name }}
+                    </span>
+                    <!-- Profile Picture (Inisial Nama) -->
+                    <a href="{{ url('/profile') }}" title="Buka Profil"
+                        style="display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background-color: #2a4d38; color: white; border-radius: 50%; font-weight: bold; text-decoration: none; font-size: 1.1rem; border: 2px solid #e2e8e0; transition: transform 0.2s;"
+                        onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </a>
+                </div>
+
+                <!-- Logout must be a POST request in Laravel to prevent CSRF attacks -->
+                {{-- <form action="{{ url('/logout') }}" method="POST" style="margin: 0;">
+                    @csrf
+                    <button type="submit" class="nav-cta" style="background: none; cursor: pointer; font-family: inherit;">
+                        Log out
+                    </button>
+                </form> --}}
+            @endauth
+
+
+
         </nav>
 
     </header>
