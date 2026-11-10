@@ -27,6 +27,10 @@ class User extends Authenticatable
         'lokasi',
         'latitude',
         'longitude',
+        'mode_libur',
+        'notif_adzan_aktif',
+        'notif_dalil_aktif',
+        'dnd',
     ];
 
     /**
