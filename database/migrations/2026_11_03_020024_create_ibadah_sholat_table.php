@@ -6,29 +6,41 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('ibadah_sholat', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('jadwal_id')->nullable()->constrained('jadwal_sholat');
-            $table->string('jenis_sholat');
-            $table->enum('kategori', ['wajib', 'sunnah']);
+
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+            $table->foreignId('jenis_ibadah_id')
+                ->constrained('jenis_ibadah')
+                ->restrictOnDelete();
+
+            $table->foreignId('jadwal_id')
+                ->nullable()
+                ->constrained('jadwal_sholat')
+                ->nullOnDelete();
+
             $table->date('tanggal');
+
             $table->time('waktu_pelaksanaan')->nullable();
-            $table->enum('status', ['selesai', 'belum', 'libur'])->default('belum');
+
+            $table->boolean('tepat_waktu')->nullable();
+
+            $table->enum('status', ['selesai', 'belum', 'libur'])
+                ->default('belum');
+
             $table->string('keterangan')->nullable();
+
             $table->timestamps();
-            $table->unique(['user_id', 'jenis_sholat', 'tanggal']);
+
+            $table->unique(['user_id', 'jenis_ibadah_id', 'tanggal']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('ibadah_sholat');

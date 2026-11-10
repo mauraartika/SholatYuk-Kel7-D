@@ -6,27 +6,39 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('notifikasi', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pengirim_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('penerima_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('dalil_id')->nullable()->constrained('dalil');
+
+            $table->foreignId('pengirim_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->foreignId('penerima_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+            $table->foreignId('dalil_id')
+                ->nullable()
+                ->constrained('dalil')
+                ->nullOnDelete();
+
             $table->enum('jenis', ['adzan', 'sosial', 'dalil']);
+
             $table->string('isi_pesan')->nullable();
+
             $table->dateTime('waktu_kirim')->useCurrent();
+
             $table->boolean('status_baca')->default(false);
+
             $table->timestamps();
+
+            $table->index(['penerima_id', 'status_baca']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('notifikasi');

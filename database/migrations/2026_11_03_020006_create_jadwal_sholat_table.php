@@ -6,26 +6,35 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('jadwal_sholat', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_sholat');
-            $table->enum('kategori', ['wajib', 'sunnah']);
-            $table->date('tanggal');
+
+            $table->decimal('latitude', 10, 7);
+            $table->decimal('longitude', 10, 7);
+
             $table->string('lokasi')->nullable();
+
+            $table->date('tanggal');
+
+            $table->string('nama_sholat');
+
             $table->time('waktu_mulai');
-            $table->time('waktu_selesai');
+
+            $table->time('waktu_selesai')->nullable();
+
             $table->timestamps();
+
+            $table->unique([
+                'latitude',
+                'longitude',
+                'tanggal',
+                'nama_sholat'
+            ]);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('jadwal_sholat');
