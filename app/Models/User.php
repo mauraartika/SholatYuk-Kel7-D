@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -74,4 +75,46 @@ class User extends Authenticatable
     {
         return $this->hasMany(Pertemanan::class, 'pengirim_id');
     }
+
+    // Relasi riwayat ibadah sholat pengguna
+    public function ibadahSholat(): HasMany
+    {
+        return $this->hasMany(IbadahSholat::class);
+    }
+
+    // Relasi jenis ibadah yang dibuat pengguna
+    public function jenisIbadah(): HasMany
+    {
+        return $this->hasMany(JenisIbadah::class);
+    }
+
+    // Relasi statistik ibadah pengguna
+    public function statistikIbadah(): HasMany
+    {
+        return $this->hasMany(StatistikIbadah::class);
+    }
+
+    // Relasi streak yang diikuti pengguna
+    public function streaks(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Streak::class,
+            'streak_anggota',
+            'user_id',
+            'streak_id'
+        );
+    }
+
+    // Relasi notifikasi yang diterima pengguna
+    public function notifikasiDiterima(): HasMany
+    {
+        return $this->hasMany(Notifikasi::class, 'penerima_id');
+    }
+
+    // Relasi notifikasi yang dikirim pengguna
+    public function notifikasiDikirim(): HasMany
+    {
+        return $this->hasMany(Notifikasi::class, 'pengirim_id');
+    }
+
 }
