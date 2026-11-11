@@ -71,12 +71,12 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin</label>
                     <div class="flex items-center gap-6 px-2">
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="gender" value="laki-laki" required
+                            <input type="radio" name="gender" value="L" required
                                 class="w-4 h-4 text-[#2a4d38] bg-gray-50 border-gray-300 focus:ring-[#2a4d38]">
                             <span class="text-sm text-gray-700">Laki-laki</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="gender" value="perempuan" required
+                            <input type="radio" name="gender" value="P" required
                                 class="w-4 h-4 text-[#2a4d38] bg-gray-50 border-gray-300 focus:ring-[#2a4d38]">
                             <span class="text-sm text-gray-700">Perempuan</span>
                         </label>

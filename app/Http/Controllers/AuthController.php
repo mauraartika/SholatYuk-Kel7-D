@@ -5,39 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
     // Handle Registration Submission
     public function register(Request $request)
     {
-        // 🌟 TEMPORARY DEBUG CODE: Add this block right here
-    $validator = Validator::make($request->all(), [
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-        'password' => ['required', 'string', 'min:8', 'confirmed'],
-    ]);
-
-    // if ($validator->fails()) {
-    //     dd($validator->errors()->all()); // This halts execution and prints the exact error!
-    // }
-    // 🌟 END OF DEBUG CODE
         // 1. Validate the forms inputs (including matching passwords)
         $credentials = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'gender' => ['required', 'in:laki-laki,perempuan'],
+            'gender' => ['required', 'in:L,P'],
             'password' => ['required', 'string', 'min:8', 'confirmed'], // Checks for password_confirmation
         ]);
 
-        // 2. Create the User in your SQLite database
+        // 2. Create the User in PostgreSQL database
         $user = User::create([
             'name' => $credentials['name'],
             'email' => $credentials['email'],
             'gender' => $credentials['gender'],
-            'password' => Hash::make($credentials['password']), // Securely hash password
+            'password' => $credentials['password'],
         ]);
 
         // 3. Log the user in and redirect to dashboard
