@@ -263,6 +263,69 @@
         .btn-ghost { background: white; color: var(--green); border: 1px solid var(--line); }
         .btn-ghost:hover { background: var(--mint); }
 
+        /* FORM TAMBAH AUDIO ADZAN */
+        .upload-audio {
+            margin: 12px;
+            padding: 18px;
+            border: 1.5px dashed #cbd8cd;
+            border-radius: 16px;
+            background: #fafcf9;
+        }
+
+        .upload-audio h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .upload-audio p {
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 15px;
+        }
+
+        .upload-group {
+            margin-bottom: 13px;
+        }
+
+        .upload-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .upload-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: white;
+            font-family: inherit;
+            font-size: 12px;
+        }
+
+        .audio-preview {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-upload {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            background: var(--green);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-upload:hover {
+            background: var(--dark);
+        }
+
+
         /* TOAST */
         .toast {
             position: fixed; top: 90px; left: 50%;
@@ -286,20 +349,78 @@
             .nav-links { display: none; }
             .container { padding: 35px 15px 130px; }
         }
-    </style>
+
+        /* PERKECIL FORM TAMBAH AUDIO */
+        .upload-audio {
+            padding: 14px 16px !important;
+            margin: 10px 12px !important;
+        }
+
+        .upload-group {
+            margin-bottom: 9px !important;
+        }
+
+        .upload-group label {
+            margin-bottom: 5px !important;
+            font-size: 13px !important;
+        }
+
+        .upload-group input {
+            padding: 9px 12px !important;
+            min-height: 40px;
+            font-size: 13px !important;
+        }
+
+        .upload-audio button {
+            padding: 11px !important;
+            font-size: 13px !important;
+        }
+
+        /* PERBESAR AREA DAFTAR SUARA */
+        .sound-list {
+            flex: 1;
+            min-height: 200px;
+            padding: 14px 15px;
+        }
+
+        .sound-option {
+            padding: 16px 16px;
+            gap: 14px;
+            margin-bottom: 10px;
+            border-radius: 17px;
+        }
+
+        .play-btn {
+            width: 46px;
+            height: 46px;
+            font-size: 15px;
+        }
+
+        .sound-info strong {
+            font-size: 15px;
+        }
+
+        .sound-info small {
+            font-size: 12px;
+        }
+
+        .radio {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* SEDIKIT PERBESAR MODAL */
+        .sheet {
+            max-height: 92vh;
+        }
+
+            </style>
 </head>
 
 <body>
 
 <nav class="navbar">
     <a href="{{ url('/') }}" class="brand">Sholat<span>Yuk.</span></a>
-
-    {{-- <div class="nav-links">
-        <a href="{{ url('/') }}">Beranda</a>
-        <a href="{{ url('/masjid-terdekat') }}">Masjid Terdekat</a>
-        <a href="{{ url('/arah-kiblat') }}">Arah Kiblat</a>
-        <a href="#" class="active">Profil</a>
-    </div> --}}
 
     <a href="{{ url('/') }}" class="back-link">← Kembali</a>
 </nav>
@@ -374,21 +495,56 @@
         <div class="sheet-header">
             <div>
                 <h2 id="adzanTitle">Suara Adzan</h2>
-                <p>Tekan ▶ untuk mendengarkan contoh, lalu pilih suara adzan dan tekan Simpan.</p>
+                <p>Pilih atau tambahkan suara adzan.</p>
             </div>
             <button class="close-btn" id="closeAdzan" type="button" aria-label="Tutup">✕</button>
         </div>
 
-        <!-- NOTIFIKASI POPUP -->
-        <div class="notif-box">
-            <div class="notif-text">
-                <strong>Notifikasi popup</strong>
-                <small id="notifStatusText">Belum aktif</small>
+        <!-- FORM TAMBAH AUDIO ADZAN -->
+        <div class="upload-audio">
+
+            <h3>+ Tambah Audio Adzan</h3>
+            <p>Tambahkan nama dan suara adzan milikmu sendiri.</p>
+
+            <div class="upload-group">
+                <label for="namaAudio">Nama Adzan</label>
+                <input
+                    type="text"
+                    id="namaAudio"
+                    placeholder="Contoh: Adzan Subuh"
+                    required
+                >
             </div>
-            <button class="notif-btn" id="enableNotif" type="button">Aktifkan</button>
+
+            <div class="upload-group">
+                <label for="fileAudio">File Suara Adzan (MP3)</label>
+                <input
+                    type="file"
+                    id="fileAudio"
+                    accept=".mp3,audio/mpeg"
+                    required
+                >
+            </div>
+
+            <audio
+                id="previewAudio"
+                class="audio-preview"
+                controls
+                style="display:none">
+            </audio>
+
+            <button
+                type="button"
+                class="btn-upload"
+                id="addAudio">
+                Tambahkan Audio
+            </button>
+
         </div>
 
-        <div class="sound-list" id="soundList"></div>
+<!-- DAFTAR PILIHAN SUARA ADZAN -->
+<div class="sound-list" id="soundList"></div>
+
 
         <div class="sheet-footer">
             <div class="form-error" id="adzanError"></div>
@@ -414,6 +570,97 @@
         { id: 'alaqsa',   name: 'Adzan Al-Aqsa',  desc: 'Gaya Masjid Al-Aqsa',    file: "{{ asset('audio/adzan/alaqsa.mp3') }}" },
         { id: 'subuh',    name: 'Adzan Subuh',    desc: 'Dengan tambahan Ash-sholatu khairum minan-naum', file: "{{ asset('audio/adzan/subuh.mp3') }}" }
     ];
+
+    // ====== UPLOAD AUDIO ADZAN CUSTOM ======
+
+    const namaAudio = document.getElementById('namaAudio');
+    const fileAudio = document.getElementById('fileAudio');
+    const previewAudio = document.getElementById('previewAudio');
+    const addAudio = document.getElementById('addAudio');
+
+    // Menampung audio custom selama halaman terbuka
+    const customSounds = [];
+
+    let previewURL = null;
+
+    // Preview audio sebelum ditambahkan
+    fileAudio.addEventListener('change', function () {
+
+        const file = this.files[0];
+
+        if (!file) return;
+
+        if (file.type !== 'audio/mpeg' &&
+            !file.name.toLowerCase().endsWith('.mp3')) {
+
+            showToast('File harus berformat MP3.', 'error');
+            this.value = '';
+            previewAudio.style.display = 'none';
+            return;
+        }
+
+        if (previewURL) {
+            URL.revokeObjectURL(previewURL);
+        }
+
+        previewURL = URL.createObjectURL(file);
+
+        previewAudio.src = previewURL;
+        previewAudio.style.display = 'block';
+    });
+
+    // Menambahkan audio ke daftar pilihan
+    addAudio.addEventListener('click', function () {
+
+        const name = namaAudio.value.trim();
+        const file = fileAudio.files[0];
+
+        if (!name) {
+            showToast('Nama adzan harus diisi.', 'error');
+            return;
+        }
+
+        if (!file) {
+            showToast('Silakan pilih file MP3.', 'error');
+            return;
+        }
+
+        if (customSounds.some(sound =>
+            sound.name.toLowerCase() === name.toLowerCase()
+        )) {
+            showToast('Nama adzan sudah digunakan.', 'error');
+            return;
+        }
+
+        if (file.type !== 'audio/mpeg' &&
+            !file.name.toLowerCase().endsWith('.mp3')) {
+            showToast('File harus berformat MP3.', 'error');
+            return;
+        }
+
+        const sound = {
+            id: 'custom-' + Date.now(),
+            name: name,
+            desc: 'Audio adzan yang ditambahkan sendiri',
+            file: previewURL
+        };
+
+        customSounds.push(sound);
+        ADZAN_SOUNDS.push(sound);
+
+        renderSounds();
+
+        namaAudio.value = '';
+        fileAudio.value = '';
+        previewAudio.pause();
+        previewAudio.removeAttribute('src');
+        previewAudio.style.display = 'none';
+        previewURL = null;
+
+        showToast('Audio adzan berhasil ditambahkan.');
+
+    });
+
 
     const STORAGE_KEY = 'sholatyuk_adzan';
     const ENABLED_KEY = 'notification';
@@ -530,49 +777,11 @@
         });
     }
 
-    /* ====== NOTIFIKASI POPUP ====== */
-    const notifBtn    = document.getElementById('enableNotif');
-    const notifStatus = document.getElementById('notifStatusText');
-
-    function refreshNotif() {
-        if (!('Notification' in window)) {
-            notifStatus.textContent = 'Browser ini belum mendukung notifikasi.';
-            notifBtn.disabled = true;
-            return;
-        }
-
-        const perm = Notification.permission;
-
-        if (perm === 'granted') {
-            notifStatus.textContent = 'Aktif. Popup dan suara adzan muncul saat waktu sholat tiba.';
-            notifBtn.textContent = 'Aktif ✓';
-            notifBtn.disabled = true;
-        } else if (perm === 'denied') {
-            notifStatus.textContent = 'Diblokir. Izinkan lewat pengaturan situs di browser.';
-            notifBtn.disabled = true;
-        } else {
-            notifStatus.textContent = 'Belum aktif. Izinkan agar notifikasi muncul di perangkat.';
-            notifBtn.textContent = 'Aktifkan';
-            notifBtn.disabled = false;
-        }
-    }
-
-    notifBtn.addEventListener('click', async () => {
-        if (!window.PrayerNotif) return;
-        const result = await PrayerNotif.enableSystem();
-        refreshNotif();
-        showToast(
-            result === 'granted' ? 'Notifikasi berhasil diaktifkan.' : 'Izin notifikasi belum diberikan.',
-            result === 'granted' ? 'success' : 'error'
-        );
-    });
-
     /* ====== OPEN / CLOSE ====== */
     function openAdzan() {
         selectedSoundId = savedSoundId;
         errorBox.classList.remove('show');
         renderSounds();
-        refreshNotif();
         overlay.classList.add('show');
         overlay.setAttribute('aria-hidden', 'false');
     }
