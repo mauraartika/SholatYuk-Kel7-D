@@ -4,39 +4,82 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ProfileController extends Controller
 {
-    // Method untuk menampilkan halaman profil (opsional jika belum ada)
     public function index()
     {
         return view('profile');
     }
 
-    // Method untuk mengupdate toggle preferensi
-   public function updatePreferences(Request $request)
-{
-    $user = Auth::user();
+    public function updatePreferences(Request $request)
+    {
+        $user = Auth::user();
 
-    // Cek apakah DnD aktif
-    $isDndActive = $request->has('dnd');
+        DB::transaction(function () use ($request, $user) {
+            $modeLiburSebelumnya = (bool) $user->mode_libur;
+            $modeLiburSekarang = $request->boolean('mode_libur');
 
-    $user->dnd = $isDndActive ? 1 : 0;
-    $user->mode_libur = $request->has('mode_libur') ? 1 : 0;
+            // Aktivasi Mode Libur
+            if (!$modeLiburSebelumnya && $modeLiburSekarang) {
+                $user->tgl_mulai_libur = now()->toDateString();
+            }
 
-    // Logika Pemaksaan Backend:
-    // Jika DnD aktif, paksa notif lain menjadi 0.
-    // Jika tidak, gunakan nilai dari checkbox yang dikirimkan.
-    if ($isDndActive) {
-        $user->notif_adzan_aktif = 0;
-        $user->notif_dalil_aktif = 0;
-    } else {
-        $user->notif_adzan_aktif = $request->has('notif_adzan_aktif') ? 1 : 0;
-        $user->notif_dalil_aktif = $request->has('notif_dalil_aktif') ? 1 : 0;
+            // Deaktivasi Mode Libur
+            if ($modeLiburSebelumnya && !$modeLiburSekarang) {
+                if ($user->tgl_mulai_libur) {
+                    $tanggalMulai = Carbon::parse($user->tgl_mulai_libur);
+                    $tanggalSekarang = now()->startOfDay();
+
+                    $durasiLibur = max(
+                        0,
+                        (int) $tanggalMulai->startOfDay()
+                            ->diffInDays($tanggalSekarang)
+                    );
+
+                    // Sesuaikan tanggal aktivitas streak pribadi
+                    if ($durasiLibur > 0) {
+                        $streakPribadi = $user->streaks()
+                            ->where('streak.tipe', 'pribadi')
+                            ->whereNotNull('streak.tgl_terakhir_aktif')
+                            ->get();
+
+                        foreach ($streakPribadi as $streak) {
+                            $streak->tgl_terakhir_aktif =
+                                Carbon::parse($streak->tgl_terakhir_aktif)
+                                    ->addDays($durasiLibur);
+
+                            $streak->save();
+                        }
+                    }
+                }
+
+                $user->tgl_mulai_libur = null;
+            }
+
+            $user->mode_libur = $modeLiburSekarang;
+
+            // Pengaturan DND
+            $user->dnd = $request->boolean('dnd');
+
+            // Saat DND aktif, pertahankan preferensi notifikasi sebelumnya.
+            // Saat DND nonaktif, pengguna dapat memperbarui preferensinya.
+            if (!$user->dnd) {
+                $user->notif_adzan_aktif =
+                    $request->boolean('notif_adzan_aktif');
+
+                $user->notif_dalil_aktif =
+                    $request->boolean('notif_dalil_aktif');
+            }
+
+            $user->save();
+        });
+
+        return back()->with(
+            'success',
+            'Preferensi berhasil diperbarui!'
+        );
     }
-
-    $user->save();
-
-    return back()->with('success', 'Preferensi berhasil diperbarui!');
-}
 }

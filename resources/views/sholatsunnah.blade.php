@@ -1,15 +1,22 @@
-
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sholat Sunnah - SholatYuk</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             background: #f7f7f2;
@@ -26,7 +33,11 @@
             border-bottom: 1px solid #e4e7df;
         }
 
-        .logo { color: #315c46; font-size: 22px; font-weight: 700; }
+        .logo {
+            color: #315c46;
+            font-size: 22px;
+            font-weight: 700;
+        }
 
         nav a {
             color: #315c46;
@@ -34,7 +45,11 @@
             font-weight: 600;
         }
 
-        .container { max-width: 950px; margin: 50px auto; padding: 0 24px; }
+        .container {
+            max-width: 950px;
+            margin: 50px auto;
+            padding: 0 24px;
+        }
 
         .eyebrow {
             color: #68816f;
@@ -49,7 +64,11 @@
             margin: 10px 0;
         }
 
-        .intro { color: #68736b; line-height: 1.7; margin-bottom: 28px; }
+        .intro {
+            color: #68736b;
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
 
         .highlight {
             background: #315c46;
@@ -59,8 +78,15 @@
             margin-bottom: 30px;
         }
 
-        .highlight p { opacity: .85; font-size: 13px; }
-        .highlight h2 { font-size: 22px; margin-top: 8px; }
+        .highlight p {
+            opacity: .85;
+            font-size: 13px;
+        }
+
+        .highlight h2 {
+            font-size: 22px;
+            margin-top: 8px;
+        }
 
         .section-heading {
             display: flex;
@@ -70,7 +96,9 @@
             margin-bottom: 15px;
         }
 
-        .section-heading h2 { font-size: 20px; }
+        .section-heading h2 {
+            font-size: 20px;
+        }
 
         .prayer-list {
             display: grid;
@@ -89,8 +117,16 @@
             gap: 12px;
         }
 
-        .prayer h3 { font-size: 16px; margin-bottom: 5px; }
-        .prayer p { color: #68736b; font-size: 12px; line-height: 1.5; }
+        .prayer h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .prayer p {
+            color: #68736b;
+            font-size: 12px;
+            line-height: 1.5;
+        }
 
         .prayer button {
             border: 0;
@@ -103,7 +139,10 @@
             white-space: nowrap;
         }
 
-        .prayer button.done { background: #315c46; color: white; }
+        .prayer button.done {
+            background: #315c46;
+            color: white;
+        }
 
         .add-button {
             background: #315c46;
@@ -124,7 +163,9 @@
             display: none;
         }
 
-        .add-form.show { display: block; }
+        .add-form.show {
+            display: block;
+        }
 
         .add-form label {
             display: block;
@@ -156,8 +197,15 @@
             font-weight: 700;
         }
 
-        .save-button { background: #315c46; color: white; }
-        .cancel-button { background: #e8eee7; color: #315c46; }
+        .save-button {
+            background: #315c46;
+            color: white;
+        }
+
+        .cancel-button {
+            background: #e8eee7;
+            color: #315c46;
+        }
 
         .delete-button {
             background: transparent !important;
@@ -219,12 +267,23 @@
             max-width: calc(100% - 32px);
         }
 
-        .toast.show { opacity: 1; transform: translate(-50%, 0); }
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
 
         @media (max-width: 600px) {
-            h1 { font-size: 30px; }
-            .prayer-list { grid-template-columns: 1fr; }
-            .section-heading { align-items: flex-start; }
+            h1 {
+                font-size: 30px;
+            }
+
+            .prayer-list {
+                grid-template-columns: 1fr;
+            }
+
+            .section-heading {
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
@@ -254,22 +313,34 @@
 
         <div class="prayer-list" id="dailyList">
             <div class="prayer">
-                <div><h3>Sholat Rawatib</h3><p>Sebelum atau sesudah sholat wajib</p></div>
+                <div>
+                    <h3>Sholat Rawatib</h3>
+                    <p>Sebelum atau sesudah sholat wajib</p>
+                </div>
                 <button onclick="togglePrayer(this, 'Rawatib')">Tandai</button>
             </div>
 
             <div class="prayer">
-                <div><h3>Sholat Dhuha</h3><p>Pagi hingga menjelang Dzuhur</p></div>
+                <div>
+                    <h3>Sholat Dhuha</h3>
+                    <p>Pagi hingga menjelang Dzuhur</p>
+                </div>
                 <button onclick="togglePrayer(this, 'Dhuha')">Tandai</button>
             </div>
 
             <div class="prayer">
-                <div><h3>Sholat Tahajud</h3><p>Dikerjakan pada malam hari setelah tidur</p></div>
+                <div>
+                    <h3>Sholat Tahajud</h3>
+                    <p>Dikerjakan pada malam hari setelah tidur</p>
+                </div>
                 <button onclick="togglePrayer(this, 'Tahajud')">Tandai</button>
             </div>
 
             <div class="prayer">
-                <div><h3>Sholat Witir</h3><p>Setelah Isya hingga sebelum Subuh</p></div>
+                <div>
+                    <h3>Sholat Witir</h3>
+                    <p>Setelah Isya hingga sebelum Subuh</p>
+                </div>
                 <button onclick="togglePrayer(this, 'Witir')">Tandai</button>
             </div>
         </div>
@@ -284,12 +355,10 @@
 
             <form onsubmit="addPrayer(event)">
                 <label for="prayerName">Nama Sholat Sunnah</label>
-                <input type="text" id="prayerName"
-                    placeholder="Contoh: Sholat Taubat" required maxlength="50">
+                <input type="text" id="prayerName" placeholder="Contoh: Sholat Taubat" required maxlength="50">
 
                 <label for="prayerNote">Keterangan (Opsional)</label>
-                <input type="text" id="prayerNote"
-                    placeholder="Contoh: Ketika ingin memohon ampun" maxlength="100">
+                <input type="text" id="prayerNote" placeholder="Contoh: Ketika ingin memohon ampun" maxlength="100">
 
                 <div class="form-actions">
                     <button type="submit" class="save-button">Simpan</button>
@@ -310,6 +379,15 @@
 
     <script>
         let toastTimer;
+        let customPrayers = [];
+        let customCompletedIds = new Set();
+
+        const jenisIbadahSunnah = {
+            'Rawatib': 6,
+            'Dhuha': 7,
+            'Tahajud': 8,
+            'Witir': 9
+        };
 
         function showToast(message) {
             const toast = document.getElementById('toast');
@@ -317,7 +395,23 @@
             toast.classList.add('show');
 
             clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        function getTanggalHariIni() {
+            const tanggal = new Date();
+
+            return [
+                tanggal.getFullYear(),
+                String(tanggal.getMonth() + 1).padStart(2, '0'),
+                String(tanggal.getDate()).padStart(2, '0')
+            ].join('-');
+        }
+
+        function getCustomPrayers() {
+            return customPrayers;
         }
 
         function getSavedPrayers() {
@@ -329,41 +423,185 @@
             localStorage.setItem('sholatYukSunnahCount', prayers.length);
         }
 
-        function getCustomPrayers() {
-            return JSON.parse(localStorage.getItem('sholatYukCustom') || '[]');
-        }
-
-        function saveCustomPrayers(prayers) {
-            localStorage.setItem('sholatYukCustom', JSON.stringify(prayers));
-        }
-
         function updateSummary() {
-            const total = getSavedPrayers().length;
+            const totalWajibSunnah = getSavedPrayers().length;
+
+            const totalCustomSunnah = customPrayers.filter(prayer =>
+                customCompletedIds.has(Number(prayer.id))
+            ).length;
+
+            const total = totalWajibSunnah + totalCustomSunnah;
+
             document.getElementById('summary').textContent =
-                total === 0
-                    ? 'Belum ada ibadah yang dicatat'
-                    : total + ' jenis sholat sunnah telah dicatat';
+                total === 0 ?
+                'Belum ada ibadah yang dicatat' :
+                total + ' jenis sholat sunnah telah dicatat';
         }
 
-        function togglePrayer(button, name) {
-            let prayers = getSavedPrayers();
+        // Memuat catatan sholat sunnah dari PostgreSQL
 
-            if (prayers.includes(name)) {
-                prayers = prayers.filter(prayer => prayer !== name);
-                button.classList.remove('done');
-                button.textContent = 'Tandai';
-                showToast('Catatan Sholat ' + name + ' berhasil diperbarui!');
-            } else {
-                prayers.push(name);
-                button.classList.add('done');
-                button.textContent = 'Selesai ✓';
-                showToast('Sholat ' + name + ' berhasil dicatat!');
+        async function loadSavedPrayers() {
+            try {
+                const [ibadahResponse, jenisResponse] = await Promise.all([
+                    fetch('/api/ibadah', {
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    }),
+                    fetch('/api/jenis-ibadah', {
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    })
+                ]);
+
+                const ibadahResult = await ibadahResponse.json();
+                const jenisResult = await jenisResponse.json();
+
+                if (!ibadahResponse.ok || !jenisResponse.ok) {
+                    throw new Error('Gagal mengambil data ibadah.');
+                }
+
+                const tanggalHariIni = getTanggalHariIni();
+
+                // Memuat empat sholat sunnah bawaan
+                const completed = [];
+
+                document.querySelectorAll('#dailyList .prayer').forEach(item => {
+                    const name = item.querySelector('h3').textContent.replace('Sholat ', '');
+                    const button = item.querySelector('button');
+                    const id = jenisIbadahSunnah[name];
+
+                    const record = ibadahResult.data.find(item =>
+                        Number(item.jenis_ibadah_id) === id &&
+                        String(item.tanggal).substring(0, 10) === tanggalHariIni
+                    );
+
+                    button.classList.remove('done');
+                    button.textContent = 'Tandai';
+
+                    if (record && record.status === 'selesai') {
+                        button.classList.add('done');
+                        button.textContent = 'Selesai ✓';
+                        completed.push(name);
+                    }
+                });
+
+                savePrayers(completed);
+
+                // Memuat jenis sholat sunnah khusus dari PostgreSQL
+                customPrayers = jenisResult.data.filter(item =>
+                    item.user_id !== null
+                );
+
+                // Memuat status penyelesaian sholat khusus hari ini
+                customCompletedIds = new Set(
+                    ibadahResult.data
+                    .filter(item =>
+                        item.status === 'selesai' &&
+                        String(item.tanggal).substring(0, 10) === tanggalHariIni
+                    )
+                    .map(item => Number(item.jenis_ibadah_id))
+                );
+
+                renderCustomPrayers();
+                updateSummary();
+
+            } catch (error) {
+                console.error('Gagal memuat sholat sunnah:', error);
+                showToast('Gagal memuat catatan sholat sunnah.');
+            }
+        }
+
+        // Menandai atau membatalkan sholat sunnah bawaan
+
+        async function togglePrayer(button, prayerIdentifier) {
+            const isCustom = typeof prayerIdentifier === 'number';
+
+            const id = isCustom ?
+                prayerIdentifier :
+                jenisIbadahSunnah[prayerIdentifier];
+
+            if (!id) {
+                showToast('Jenis sholat tidak ditemukan.');
+                return;
             }
 
-            savePrayers(prayers);
-            updateSummary();
+            const sudahDitandai = button.classList.contains('done');
+
+            if (sudahDitandai) {
+                const yakin = confirm('Apakah kamu yakin ingin membatalkan catatan ini?');
+                if (!yakin) return;
+            }
+
+            button.disabled = true;
+
+            const statusBaru = sudahDitandai ? 'belum' : 'selesai';
+
+            try {
+                const response = await fetch('/api/ibadah', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector(
+                            'meta[name="csrf-token"]'
+                        ).content
+                    },
+                    body: JSON.stringify({
+                        jenis_ibadah_id: id,
+                        tanggal: getTanggalHariIni(),
+                        status: statusBaru
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Gagal menyimpan catatan.');
+                }
+
+                if (statusBaru === 'selesai') {
+                    button.classList.add('done');
+                    button.textContent = 'Selesai ✓';
+
+                    if (isCustom) {
+                        customCompletedIds.add(id);
+                    }
+
+                    showToast('Sholat berhasil dicatat!');
+                } else {
+                    button.classList.remove('done');
+                    button.textContent = 'Tandai';
+
+                    if (isCustom) {
+                        customCompletedIds.delete(id);
+                    }
+
+                    showToast('Catatan sholat berhasil dibatalkan.');
+                }
+
+                if (!isCustom) {
+                    const completed = getSavedPrayers();
+
+                    const updated = statusBaru === 'selesai' ? [...new Set([...completed, prayerIdentifier])] :
+                        completed.filter(item => item !== prayerIdentifier);
+
+                    savePrayers(updated);
+                }
+
+                updateSummary();
+
+            } catch (error) {
+                console.error('Gagal menyimpan sholat:', error);
+                showToast(error.message || 'Terjadi kesalahan.');
+
+            } finally {
+                button.disabled = false;
+            }
         }
 
+        // Form tambah sholat sunnah khusus
         function showAddForm() {
             document.getElementById('addForm').classList.add('show');
             document.getElementById('prayerName').focus();
@@ -374,7 +612,7 @@
             document.querySelector('#addForm form').reset();
         }
 
-        function addPrayer(event) {
+        async function addPrayer(event) {
             event.preventDefault();
 
             const name = document.getElementById('prayerName').value.trim();
@@ -385,39 +623,71 @@
                 return;
             }
 
-            const custom = getCustomPrayers();
+            const standardNames = Object.keys(jenisIbadahSunnah);
 
-            const duplicate = custom.some(prayer =>
-                prayer.name.toLowerCase() === name.toLowerCase()
+            const duplicate = customPrayers.some(prayer =>
+                prayer.nama_ibadah.toLowerCase() === name.toLowerCase()
             );
 
-            const standardNames = ['Rawatib', 'Dhuha', 'Tahajud', 'Witir'];
-
-            if (duplicate || standardNames.some(item => item.toLowerCase() === name.toLowerCase())) {
+            if (
+                duplicate ||
+                standardNames.some(item => item.toLowerCase() === name.toLowerCase())
+            ) {
                 showToast('Sholat tersebut sudah ada di daftar!');
                 return;
             }
 
-            custom.push({
-                id: Date.now(),
-                name: name,
-                note: note
-            });
+            const submitButton = document.querySelector(
+                '#addForm button[type="submit"]'
+            );
 
-            saveCustomPrayers(custom);
-            renderCustomPrayers();
-            hideAddForm();
-            showToast('Sholat ' + name + ' berhasil ditambahkan!');
+            submitButton.disabled = true;
+
+            try {
+                const response = await fetch('/api/jenis-ibadah', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector(
+                            'meta[name="csrf-token"]'
+                        ).content
+                    },
+                    body: JSON.stringify({
+                        nama_ibadah: name,
+                        keterangan: note || null
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Gagal menambahkan sholat.');
+                }
+
+                customPrayers.push(result.data);
+
+                renderCustomPrayers();
+                updateSummary();
+                hideAddForm();
+
+                showToast('Sholat ' + name + ' berhasil ditambahkan!');
+
+            } catch (error) {
+                console.error('Gagal menambahkan sholat:', error);
+                showToast(error.message || 'Terjadi kesalahan.');
+
+            } finally {
+                submitButton.disabled = false;
+            }
         }
 
         function renderCustomPrayers() {
             const list = document.getElementById('customList');
-            const custom = getCustomPrayers();
-            const completed = getSavedPrayers();
 
             list.innerHTML = '';
 
-            custom.forEach(prayer => {
+            customPrayers.forEach(prayer => {
                 const card = document.createElement('div');
                 card.className = 'prayer custom-prayer';
 
@@ -425,11 +695,13 @@
                 top.className = 'prayer-top';
 
                 const info = document.createElement('div');
+
                 const title = document.createElement('h3');
-                title.textContent = prayer.name;
+                title.textContent = prayer.nama_ibadah;
 
                 const description = document.createElement('p');
-                description.textContent = prayer.note || 'Sholat sunnah tambahan';
+                description.textContent =
+                    prayer.keterangan || 'Sholat sunnah tambahan';
 
                 info.append(title, description);
                 top.append(info);
@@ -438,18 +710,21 @@
                 bottom.className = 'prayer-bottom';
 
                 const button = document.createElement('button');
-                button.textContent = completed.includes('custom-' + prayer.id) ? 'Selesai ✓' : 'Tandai';
 
-                if (completed.includes('custom-' + prayer.id)) {
+                const isCompleted = customCompletedIds.has(Number(prayer.id));
+
+                button.textContent = isCompleted ? 'Selesai ✓' : 'Tandai';
+
+                if (isCompleted) {
                     button.classList.add('done');
                 }
 
-                button.onclick = () => togglePrayer(button, 'custom-' + prayer.id);
+                button.onclick = () => togglePrayer(button, Number(prayer.id));
 
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'delete-button';
                 deleteButton.textContent = 'Hapus';
-                deleteButton.onclick = () => deletePrayer(prayer.id);
+                deleteButton.onclick = () => deletePrayer(Number(prayer.id));
 
                 bottom.append(button, deleteButton);
                 card.append(top, bottom);
@@ -457,39 +732,56 @@
             });
         }
 
-        function deletePrayer(id) {
-            const prayer = getCustomPrayers().find(item => item.id === id);
+        // Menghapus sholat sunnah khusus dari localStorage
 
-            const updated = getCustomPrayers().filter(item => item.id !== id);
-            saveCustomPrayers(updated);
+        async function deletePrayer(id) {
+            const prayer = customPrayers.find(item => Number(item.id) === id);
 
-            let completed = getSavedPrayers();
-            completed = completed.filter(item => item !== 'custom-' + id);
-            savePrayers(completed);
+            if (!prayer) return;
 
-            renderCustomPrayers();
-            updateSummary();
-            showToast('Catatan ' + prayer.name + ' berhasil dihapus!');
-        }
+            const yakin = confirm(
+                'Apakah kamu yakin ingin menghapus ' + prayer.nama_ibadah + '?'
+            );
 
-        function loadSavedPrayers() {
-            const prayers = getSavedPrayers();
+            if (!yakin) return;
 
-            document.querySelectorAll('#dailyList .prayer').forEach(item => {
-                const name = item.querySelector('h3').textContent.replace('Sholat ', '');
-                const button = item.querySelector('button');
+            try {
+                const response = await fetch('/api/jenis-ibadah/' + id, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector(
+                            'meta[name="csrf-token"]'
+                        ).content
+                    }
+                });
 
-                if (prayers.includes(name)) {
-                    button.classList.add('done');
-                    button.textContent = 'Selesai ✓';
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Gagal menghapus sholat.');
                 }
-            });
 
-            renderCustomPrayers();
-            updateSummary();
+                customPrayers = customPrayers.filter(
+                    item => Number(item.id) !== id
+                );
+
+                customCompletedIds.delete(id);
+
+                renderCustomPrayers();
+                updateSummary();
+
+                showToast('Sholat ' + prayer.nama_ibadah + ' berhasil dihapus!');
+
+            } catch (error) {
+                console.error('Gagal menghapus sholat:', error);
+                showToast(error.message || 'Terjadi kesalahan.');
+            }
         }
 
+        // Inisialisasi halaman
         loadSavedPrayers();
     </script>
 </body>
+
 </html>

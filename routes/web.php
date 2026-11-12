@@ -1,8 +1,10 @@
-
 <?php
+
+use App\Http\Controllers\IbadahController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\JenisIbadahController;
 
 // Route::get('/', function () {
 //     return view('home');
@@ -21,10 +23,6 @@ Route::get('/leaderboard', function () {
 
 Route::get('/pengaturan-notifikasi', function () {
     return view('notifikasi-audio');
-});
-
-Route::get('/pelacakan-ibadah', function () {
-    return view('pelacakanibadah');
 });
 
 Route::get('/sholat-sunnah', function () {
@@ -47,18 +45,27 @@ Route::get('/home', function () {
     return view('home');
 })->middleware('auth');
 
-
 // Profile
 
-
-// Pastikan route ini berada di dalam grup middleware 'auth'
 Route::middleware(['auth'])->group(function () {
-
-    // Route untuk menampilkan halaman profil
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-
-    // Route untuk memproses form update preferensi
     Route::put('/profile/update-preferences', [ProfileController::class, 'updatePreferences']);
 
-});
+    Route::get('/pelacakan-ibadah', function () {
+        return view('pelacakanibadah');
+    });
 
+    Route::get('/sholat-sunnah', function () {
+        return view('sholatsunnah');
+    });
+
+    // Pelacakan ibadah
+    Route::get('/api/ibadah', [IbadahController::class, 'index']);
+    Route::post('/api/ibadah', [IbadahController::class, 'store']);
+
+    // API Jenis Sholat Sunnah Khusus
+    Route::get('/api/jenis-ibadah', [JenisIbadahController::class, 'index']);
+    Route::post('/api/jenis-ibadah', [JenisIbadahController::class, 'store']);
+    Route::put('/api/jenis-ibadah/{id}', [JenisIbadahController::class, 'update']);
+    Route::delete('/api/jenis-ibadah/{id}', [JenisIbadahController::class, 'destroy']);
+});

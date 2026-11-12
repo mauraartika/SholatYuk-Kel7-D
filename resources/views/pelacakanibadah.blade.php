@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catatan Ibadah - SholatYuk</title>
 
@@ -256,7 +257,7 @@
 <body>
     <nav>
         <div class="logo">SholatYuk.</div>
-        <a href="{{ url('/') }}">← Kembali ke Home</a>
+        <a href="{{ url('/home') }}">← Kembali ke Home</a>
     </nav>
 
     <main class="container">
@@ -351,16 +352,116 @@
     <script>
         let toastTimer;
 
+        const jenisIbadahId = {
+            'Subuh': 1,
+            'Dzuhur': 2,
+            'Ashar': 3,
+            'Maghrib': 4,
+            'Isya': 5
+        };
+
+        function getTanggalHariIni() {
+            const tanggal = new Date();
+
+            return [
+                tanggal.getFullYear(),
+                String(tanggal.getMonth() + 1).padStart(2, '0'),
+                String(tanggal.getDate()).padStart(2, '0')
+            ].join('-');
+        }
+
         function showToast(message) {
             const toast = document.getElementById('toast');
+
             toast.textContent = message;
             toast.classList.add('show');
 
             clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
         }
 
-        function toggleWajib(button, nama) {
+        function updateWajibProgress() {
+            const total = document.querySelectorAll(
+                '.prayer-item button.active'
+            ).length;
+
+            document.getElementById('wajibCount').textContent =
+                total + ' dari 5';
+
+            document.getElementById('wajibProgress').style.width =
+                (total / 5 * 100) + '%';
+
+            document.getElementById('wajibMessage').textContent =
+                total === 5 ?
+                'Alhamdulillah, semua sholat wajib sudah tercatat!' :
+                'Terus jaga konsistensi ibadah wajibmu.';
+        }
+
+        // Mengambil riwayat ibadah dari database
+        async function loadTodayPrayers() {
+            try {
+                const response = await fetch('/api/ibadah', {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Gagal mengambil riwayat ibadah.');
+                }
+
+                const tanggalHariIni = getTanggalHariIni();
+
+                // Reset tampilan tombol
+                document.querySelectorAll('.prayer-item button').forEach(button => {
+                    button.classList.remove('active');
+
+                    const nama = button.getAttribute('onclick')
+                        .match(/'([^']+)'/)[1];
+
+                    button.textContent = 'Tandai ' + nama;
+                });
+
+                // Tampilkan catatan yang sudah tersimpan
+                data.data.forEach(item => {
+                    const tanggalCatatan = String(item.tanggal).substring(0, 10);
+
+                    if (
+                        tanggalCatatan === tanggalHariIni &&
+                        item.status === 'selesai'
+                    ) {
+                        const nama = Object.keys(jenisIbadahId).find(
+                            key => jenisIbadahId[key] === Number(item.jenis_ibadah_id)
+                        );
+
+                        if (nama) {
+                            const button = document.querySelector(
+                                `button[onclick="toggleWajib(this, '${nama}')"]`
+                            );
+
+                            if (button) {
+                                button.classList.add('active');
+                                button.textContent = '✓ ' + nama + ' tercatat';
+                            }
+                        }
+                    }
+                });
+
+                updateWajibProgress();
+
+            } catch (error) {
+                console.error('Gagal memuat ibadah:', error);
+                showToast('Riwayat ibadah gagal dimuat.');
+            }
+        }
+
+        // Menyimpan atau membatalkan catatan ibadah
+        async function toggleWajib(button, nama) {
             const sudahDitandai = button.classList.contains('active');
 
             if (sudahDitandai) {
@@ -369,37 +470,74 @@
                 );
 
                 if (!yakin) return;
-
-                button.classList.remove('active');
-                button.innerHTML = `Tandai ${nama}`;
-                showToast(`Penandaan sholat ${nama} berhasil dibatalkan.`);
-            } else {
-                button.classList.add('active');
-                button.innerHTML = `✓ ${nama} tercatat`;
-                showToast(`Sholat ${nama} berhasil dicatat!`);
             }
 
-            updateWajibProgress();
+            const statusBaru = sudahDitandai ? 'belum' : 'selesai';
+
+            button.disabled = true;
+
+            try {
+                const response = await fetch('/api/ibadah', {
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector(
+                            'meta[name="csrf-token"]'
+                        ).content
+                    },
+
+                    body: JSON.stringify({
+                        jenis_ibadah_id: jenisIbadahId[nama],
+                        tanggal: getTanggalHariIni(),
+                        status: statusBaru
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Gagal menyimpan catatan ibadah.');
+                }
+
+                if (statusBaru === 'selesai') {
+                    button.classList.add('active');
+                    button.textContent = '✓ ' + nama + ' tercatat';
+
+                    showToast(`Sholat ${nama} berhasil dicatat!`);
+                } else {
+                    button.classList.remove('active');
+                    button.textContent = 'Tandai ' + nama;
+
+                    showToast(`Penandaan sholat ${nama} berhasil dibatalkan.`);
+                }
+
+                updateWajibProgress();
+
+            } catch (error) {
+                console.error('Gagal menyimpan ibadah:', error);
+                showToast(error.message || 'Terjadi kesalahan saat menyimpan data.');
+
+            } finally {
+                button.disabled = false;
+            }
         }
 
-        function updateWajibProgress() {
-            const total = document.querySelectorAll('.prayer-item button.active').length;
-
-            document.getElementById('wajibCount').textContent = total + ' dari 5';
-            document.getElementById('wajibProgress').style.width = (total / 5 * 100) + '%';
-
-            document.getElementById('wajibMessage').textContent =
-                total === 5 ? 'Alhamdulillah, semua sholat wajib sudah tercatat!' :
-                'Terus jaga konsistensi ibadah wajibmu.';
-        }
-
+        // Progress sunnah sementara menggunakan localStorage
         function updateSunnahProgress() {
-            const saved = Number(localStorage.getItem('sholatYukSunnahCount') || 0);
-            document.getElementById('sunnahCount').textContent = saved + ' tercatat';
+            const saved = Number(
+                localStorage.getItem('sholatYukSunnahCount') || 0
+            );
+
+            document.getElementById('sunnahCount').textContent =
+                saved + ' tercatat';
+
             document.getElementById('sunnahProgress').style.width =
                 (Math.min(saved, 4) / 4 * 100) + '%';
         }
 
+        // Menampilkan tanggal hari ini
         document.getElementById('today').textContent =
             new Date().toLocaleDateString('id-ID', {
                 weekday: 'long',
@@ -408,7 +546,9 @@
                 year: 'numeric'
             });
 
+        // Inisialisasi halaman
         updateSunnahProgress();
+        loadTodayPrayers();
     </script>
 </body>
 

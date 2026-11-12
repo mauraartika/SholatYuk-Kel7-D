@@ -14,6 +14,7 @@ class JenisIbadah extends Model
         'user_id',
         'nama_ibadah',
         'kategori',
+        'keterangan',
     ];
 
     public function user(): BelongsTo
