@@ -1,2 +1,9 @@
 *
 !.gitignore
+!suara-adzan/
+suara-adzan/*
+!suara-adzan/adzanalaqsa.mp3
+!suara-adzan/adzanaplikasi.mp3
+!suara-adzan/adzanmadinah.mp3
+!suara-adzan/adzanmekkah.mp3
+!suara-adzan/adzansubuh.mp3

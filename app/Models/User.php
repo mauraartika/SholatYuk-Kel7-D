@@ -6,9 +6,11 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+
 
 class User extends Authenticatable
 {
@@ -28,6 +30,7 @@ class User extends Authenticatable
         'notif_adzan_aktif',
         'notif_dalil_aktif',
         'dnd',
+        'suara_adzan_id',
     ];
 
     protected $hidden = [
@@ -75,6 +78,18 @@ class User extends Authenticatable
     public function jenisIbadah(): HasMany
     {
         return $this->hasMany(JenisIbadah::class);
+    }
+
+    // Relasi suara adzan milik pengguna
+    public function suaraAdzan(): HasMany
+    {
+        return $this->hasMany(SuaraAdzan::class);
+    }
+
+    // Relasi suara adzan yang dipilih pengguna
+    public function suaraAdzanTerpilih(): BelongsTo
+    {
+        return $this->belongsTo(SuaraAdzan::class, 'suara_adzan_id');
     }
 
     // Relasi seluruh jenis ibadah yang tersedia bagi pengguna

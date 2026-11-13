@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil - SholatYuk</title>
 
@@ -404,25 +405,18 @@
 <div class="toast" id="toast"></div>
 
 <script>
-    /* ====== DATA SUARA ADZAN ======
-       Taruh file audio di: public/audio/adzan/
-       Sesuaikan nama file & label sesuai audio yang kamu punya. */
-    const ADZAN_SOUNDS = [
-        { id: 'default',  name: 'Default',        desc: 'Suara bawaan aplikasi',  file: "{{ asset('audio/adzan/default.mp3') }}" },
-        { id: 'makkah',   name: 'Adzan Makkah',   desc: 'Gaya Masjidil Haram',    file: "{{ asset('audio/adzan/makkah.mp3') }}" },
-        { id: 'madinah',  name: 'Adzan Madinah',  desc: 'Gaya Masjid Nabawi',     file: "{{ asset('audio/adzan/madinah.mp3') }}" },
-        { id: 'alaqsa',   name: 'Adzan Al-Aqsa',  desc: 'Gaya Masjid Al-Aqsa',    file: "{{ asset('audio/adzan/alaqsa.mp3') }}" },
-        { id: 'subuh',    name: 'Adzan Subuh',    desc: 'Dengan tambahan Ash-sholatu khairum minan-naum', file: "{{ asset('audio/adzan/subuh.mp3') }}" }
-    ];
+    /* ====== DATA SUARA ADZAN ======*/
+    let ADZAN_SOUNDS = [];
 
-    const STORAGE_KEY = 'sholatyuk_adzan';
+    const DEFAULT_SOUND_ID = 3;
     const ENABLED_KEY = 'notification';
-     const K = {
-        sound:   'sholatyuk_adzan',
+
+    const K = {
+        sound: 'sholatyuk_adzan',
         enabled: 'sholatyuk_notif_enabled',
-        coords:  'sholatyuk_coords',
-        times:   'sholatyuk_prayer_times',
-        fired:   'sholatyuk_notif_fired'
+        coords: 'sholatyuk_coords',
+        times: 'sholatyuk_prayer_times',
+        fired: 'sholatyuk_notif_fired'
     };
 
     const overlay    = document.getElementById('adzanOverlay');
@@ -431,11 +425,61 @@
     const toastEl    = document.getElementById('toast');
     const labelEl    = document.getElementById('currentSoundLabel');
 
-    let savedSoundId    = localStorage.getItem(STORAGE_KEY) || 'default';
-    let selectedSoundId = savedSoundId;
+    let savedSoundId    = DEFAULT_SOUND_ID;
+    let selectedSoundId = DEFAULT_SOUND_ID;
+    let soundsLoaded    = false;
     let audio           = null;
     let playingId       = null;
     let toastTimer      = null;
+
+    /* ====== LOAD SUARA DARI DATABASE ====== */
+    async function loadSounds() {
+        try {
+            const response = await fetch('/api/suara-adzan', {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                cache: 'no-store'
+            });
+
+            if (!response.ok) {
+                throw new Error('Gagal mengambil daftar suara. HTTP ' + response.status);
+            }
+
+            const data = await response.json();
+
+            ADZAN_SOUNDS = data.map(sound => ({
+                id: Number(sound.id),
+                name: sound.nama_suara,
+                desc: sound.is_custom
+                    ? 'Suara custom milikmu'
+                    : 'Suara bawaan aplikasi',
+                file: sound.file_audio,
+                isCustom: sound.is_custom,
+                isSelected: sound.is_selected
+            }));
+
+            const selectedSound = ADZAN_SOUNDS.find(sound => sound.isSelected);
+
+            savedSoundId = selectedSound
+                ? selectedSound.id
+                : DEFAULT_SOUND_ID;
+
+            selectedSoundId = savedSoundId;
+            soundsLoaded = true;
+
+            updateLabel();
+
+            return true;
+
+        } catch (error) {
+            console.error('Gagal memuat suara adzan:', error);
+            showToast('Gagal memuat daftar suara adzan.', 'error');
+            return false;
+        }
+    }
 
     /* ====== TOAST ====== */
     function showToast(text, type = 'success') {
@@ -446,6 +490,62 @@
         toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2800);
     }
 
+    /* ====== LOAD SUARA DARI DATABASE ====== */
+    async function loadSounds() {
+        try {
+            const response = await fetch('/api/suara-adzan', {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                cache: 'no-store'
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    'Gagal mengambil daftar suara. HTTP ' + response.status
+                );
+            }
+
+            const data = await response.json();
+
+            ADZAN_SOUNDS = data.map(sound => ({
+                id: Number(sound.id),
+                name: sound.nama_suara,
+                desc: sound.is_custom
+                    ? 'Suara custom milikmu'
+                    : 'Suara bawaan aplikasi',
+                file: sound.file_audio,
+                isCustom: sound.is_custom,
+                isSelected: sound.is_selected
+            }));
+
+            const selectedSound = ADZAN_SOUNDS.find(
+                sound => sound.isSelected
+            );
+
+            savedSoundId = selectedSound
+                ? selectedSound.id
+                : DEFAULT_SOUND_ID;
+
+            selectedSoundId = savedSoundId;
+            soundsLoaded = true;
+
+            updateLabel();
+
+            console.log('Daftar suara berhasil dimuat:', ADZAN_SOUNDS);
+
+            return true;
+
+        } catch (error) {
+            console.error('Gagal memuat suara adzan:', error);
+            showToast('Gagal memuat daftar suara adzan.', 'error');
+
+            return false;
+        }
+    }
+
     /* ====== AUDIO PREVIEW ====== */
     function stopAudio() {
         if (audio) {
@@ -453,16 +553,20 @@
             audio.currentTime = 0;
             audio = null;
         }
+
         playingId = null;
-        document.querySelectorAll('.play-btn').forEach(b => {
-            b.classList.remove('playing');
-            b.textContent = '▶';
+
+        document.querySelectorAll('.play-btn').forEach(button => {
+            button.classList.remove('playing');
+            button.textContent = '▶';
         });
     }
 
     function togglePlay(sound, button) {
-        // klik tombol yang sama saat sedang diputar = stop
-        if (playingId === sound.id) {
+        const soundId = Number(sound.id);
+
+        // Klik tombol yang sama saat sedang diputar = stop
+        if (playingId === soundId) {
             stopAudio();
             return;
         }
@@ -470,11 +574,13 @@
         stopAudio();
 
         audio = new Audio(sound.file);
-        playingId = sound.id;
+        playingId = soundId;
+
         button.classList.add('playing');
         button.textContent = '❚❚';
 
         audio.addEventListener('ended', stopAudio);
+
         audio.addEventListener('error', () => {
             stopAudio();
             showToast('File audio "' + sound.name + '" tidak ditemukan.', 'error');
@@ -492,7 +598,10 @@
 
         ADZAN_SOUNDS.forEach(sound => {
             const row = document.createElement('div');
-            row.className = 'sound-option' + (sound.id === selectedSoundId ? ' selected' : '');
+
+            row.className = 'sound-option' +
+                (Number(sound.id) === Number(selectedSoundId) ? ' selected' : '');
+
             row.dataset.id = sound.id;
 
             const play = document.createElement('button');
@@ -500,33 +609,46 @@
             play.className = 'play-btn';
             play.textContent = '▶';
             play.setAttribute('aria-label', 'Putar contoh ' + sound.name);
+
             play.addEventListener('click', e => {
-                e.stopPropagation();          // jangan ikut memilih saat cuma preview
+                e.stopPropagation();
                 togglePlay(sound, play);
             });
 
             const info = document.createElement('div');
             info.className = 'sound-info';
+
             const title = document.createElement('strong');
             title.textContent = sound.name;
+
             const desc = document.createElement('small');
             desc.textContent = sound.desc;
+
             info.append(title, desc);
 
             const radio = document.createElement('span');
             radio.className = 'radio';
 
             row.append(play, info, radio);
-            row.addEventListener('click', () => selectSound(sound.id));
+
+            row.addEventListener('click', () => {
+                selectSound(Number(sound.id));
+            });
+
             soundList.appendChild(row);
         });
     }
 
     function selectSound(id) {
-        selectedSoundId = id;
+        selectedSoundId = Number(id);
+
         errorBox.classList.remove('show');
+
         document.querySelectorAll('.sound-option').forEach(el => {
-            el.classList.toggle('selected', el.dataset.id === id);
+            el.classList.toggle(
+                'selected',
+                Number(el.dataset.id) === selectedSoundId
+            );
         });
     }
 
@@ -568,13 +690,30 @@
     });
 
     /* ====== OPEN / CLOSE ====== */
-    function openAdzan() {
+    async function openAdzan() {
         selectedSoundId = savedSoundId;
+
         errorBox.classList.remove('show');
-        renderSounds();
-        refreshNotif();
+
         overlay.classList.add('show');
         overlay.setAttribute('aria-hidden', 'false');
+
+        refreshNotif();
+
+        if (!soundsLoaded) {
+            soundList.textContent = 'Memuat daftar suara...';
+
+            const success = await loadSounds();
+
+            if (!success) {
+                soundList.textContent =
+                    'Gagal memuat suara adzan. Silakan coba kembali.';
+                return;
+            }
+        }
+
+        selectedSoundId = savedSoundId;
+        renderSounds();
     }
 
     function closeAdzan() {
@@ -588,13 +727,13 @@
         if (!id) {
             return 'Pilih salah satu suara adzan terlebih dahulu.';
         }
-        if (!ADZAN_SOUNDS.some(s => s.id === id)) {
+        if (!ADZAN_SOUNDS.some(s => s.id === Number(id))) {
             return 'Suara adzan yang dipilih tidak valid.';
         }
         return null;
     }
 
-    function saveAdzan() {
+    async function saveAdzan() {
         const error = validateSound(selectedSoundId);
 
         if (error) {
@@ -604,35 +743,60 @@
         }
 
         try {
-            localStorage.setItem(STORAGE_KEY, selectedSoundId);
-        } catch (e) {
-            errorBox.textContent = 'Gagal menyimpan preferensi. Coba lagi.';
+            const response = await fetch('/api/suara-adzan/select', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector(
+                        'meta[name="csrf-token"]'
+                    ).content
+                },
+                body: JSON.stringify({
+                    suara_adzan_id: selectedSoundId
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    result.message || 'Gagal menyimpan pilihan suara adzan.'
+                );
+            }
+
+            savedSoundId = Number(result.suara_adzan_id);
+
+            updateLabel();
+            closeAdzan();
+
+            const selectedSound = ADZAN_SOUNDS.find(
+                sound => Number(sound.id) === savedSoundId
+            );
+
+            const name = selectedSound
+                ? selectedSound.name
+                : 'Suara adzan';
+
+            showToast('Suara adzan "' + name + '" berhasil disimpan.');
+
+        } catch (error) {
+            console.error('Gagal menyimpan pilihan suara:', error);
+
+            errorBox.textContent = error.message ||
+                'Gagal menyimpan preferensi. Coba lagi.';
+
             errorBox.classList.add('show');
-            return;
         }
-
-        /* Opsional: simpan ke database lewat Laravel
-        fetch("{{ url('/profile/adzan') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ sound: selectedSoundId })
-        });
-        */
-
-        savedSoundId = selectedSoundId;
-        updateLabel();
-        closeAdzan();
-
-        const name = ADZAN_SOUNDS.find(s => s.id === savedSoundId).name;
-        showToast('Suara adzan "' + name + '" berhasil disimpan.');
     }
 
     function updateLabel() {
-        const found = ADZAN_SOUNDS.find(s => s.id === savedSoundId);
-        labelEl.textContent = found ? found.name : 'Default';
+        const found = ADZAN_SOUNDS.find(
+            sound => sound.id === Number(savedSoundId)
+        );
+
+        labelEl.textContent = found ? found.name : 'Adzan Default';
     }
 
     /* ====== EVENTS ====== */
@@ -682,13 +846,20 @@
         });
     });
 
-    updateLabel();
+    // Inisialisasi preferensi suara adzan dari database
+    async function initializeAdzan() {
+        const success = await loadSounds();
 
-    /* Buka modal adzan otomatis kalau datang dari home (?adzan=1) */
-    if (new URLSearchParams(location.search).get('adzan') === '1') {
-        openAdzan();
-        history.replaceState(null, '', location.pathname);
+        if (!success) return;
+
+        /* Buka modal otomatis jika datang dari home (?adzan=1) */
+        if (new URLSearchParams(location.search).get('adzan') === '1') {
+            await openAdzan();
+            history.replaceState(null, '', location.pathname);
+        }
     }
+
+    initializeAdzan();
 </script>
 
 </body>
