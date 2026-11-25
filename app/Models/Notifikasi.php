@@ -13,6 +13,7 @@ class Notifikasi extends Model
         'pengirim_id',
         'penerima_id',
         'dalil_id',
+        'streak_id',
         'jenis',
         'isi_pesan',
         'waktu_kirim',
@@ -40,5 +41,10 @@ class Notifikasi extends Model
     public function dalil(): BelongsTo
     {
         return $this->belongsTo(Dalil::class, 'dalil_id');
+    }
+
+    public function streak(): BelongsTo
+    {
+        return $this->belongsTo(Streak::class, 'streak_id');
     }
 }

@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\SharedStreakController;
+use App\Services\StreakService;
+use App\Http\Controllers\PertemananController;
 use App\Http\Controllers\IbadahController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +66,38 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/leaderboard', function () {
         return view('leaderboard');
     });
+
+    // Fitur Pertemanan
+    Route::get('/teman', [PertemananController::class, 'index'])
+        ->name('teman.index');
+
+    Route::get('/teman/cari', [PertemananController::class, 'search'])
+        ->name('teman.search');
+
+    Route::post('/teman/kirim', [PertemananController::class, 'store'])
+        ->name('teman.store');
+
+    Route::post('/teman/{id}/terima', [PertemananController::class, 'accept'])
+        ->name('teman.accept');
+
+    Route::delete('/teman/{id}/tolak', [PertemananController::class, 'reject'])
+        ->name('teman.reject');
+
+    // Fitur Streak Bersama
+    Route::get('/teman/{id}/streak', [
+        SharedStreakController::class,
+        'show'
+    ])->name('teman.streak');
+
+    Route::post('/teman/{id}/streak/pengingat', [
+        SharedStreakController::class,
+        'sendReminder'
+    ])->name('teman.streak.pengingat');
+
+    Route::get('/api/teman/{id}/streak', [
+        SharedStreakController::class,
+        'status'
+    ])->name('api.teman.streak');
 
     // API Jenis Sholat Sunnah Khusus
     Route::get('/api/jenis-ibadah', [JenisIbadahController::class, 'index']);
