@@ -903,14 +903,16 @@
 
                 <div class="features">
 
-                    <article class="feature">
-                        <div class="feature-icon">◷</div>
-                        <h3>Waktu sholat</h3>
-                        <p>
-                            Lihat jadwal sholat harian dan dapatkan
-                            pengingat agar tidak melewatkan waktunya.
-                        </p>
-                    </article>
+                    <a href="{{ url('/jadwal-sholat') }}" class="feature-link">
+                        <article class="feature">
+                            <div class="feature-icon">◷</div>
+                            <h3>Waktu sholat</h3>
+                            <p>
+                                Lihat jadwal sholat harian dan dapatkan
+                                pengingat agar tidak melewatkan waktunya.
+                            </p>
+                        </article>
+                    </a>
 
                     <a href="{{ url('/masjid-terdekat') }}" class="feature-link">
                         <article class="feature">

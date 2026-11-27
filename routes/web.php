@@ -14,3 +14,6 @@ Route::get('/arah-kiblat', function () {
 Route::get('/pengaturan-notifikasi', function () {
     return view('notifikasi-audio');
 });
+Route::get('/jadwal-sholat', function () {
+    return view('jadwal-sholat');
+});
